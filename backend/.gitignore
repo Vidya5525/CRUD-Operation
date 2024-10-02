@@ -3,6 +3,7 @@ node_modules/
 
 # dotenv environment variables
 .env
+configuration/.env    # Add this line to ignore the .env file in the config folder
 
 # Logs
 logs/
