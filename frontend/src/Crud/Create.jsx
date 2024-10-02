@@ -3,6 +3,7 @@ import {useFormik} from 'formik';
 import * as yup from 'yup';
 import { Link,useNavigate } from "react-router-dom";
 import axios from 'axios';
+import Cookies from 'js-cookie'; // Assuming you're storing the token in cookies
 import './Create.css';
 
 const Create = () => {
@@ -24,7 +25,14 @@ const Create = () => {
             memberShip:yup.string().required('plese select your membership'),
         }),
         onSubmit:(values)=>{
-            axios.post(`http://localhost:5000/api/create`, values)
+          const token = localStorage.getItem("token") || Cookies.get("token"); // Get token from localStorage or cookies
+
+            if (!token) {
+                console.error("No token found, redirecting to login.");
+                navigate("/login"); // Redirect to login if no token
+                return;
+            }
+            axios.post(`http://localhost:5000/api/create`, values,{withCredentials: true})
             .then((response) => {
                  console.log('Data submitted successfully:', response.data);
                  navigate('/');

@@ -8,7 +8,7 @@ const secret = "dnvkjdsfniuehfsiunfsklnf2545646848646548454sdfskjfif";
 // Middleware to check if the user is authenticated
 export const isAuthenticated = catchAsyncError(async (req, res, next) => {
   const { token } = req.cookies;
-  console.log(token);
+  // console.log(token);
 
   if (!token) {
     return next(new ErrorHandler("Please Login to Access this Resource", 401));

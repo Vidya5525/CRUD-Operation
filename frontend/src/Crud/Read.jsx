@@ -33,7 +33,7 @@ function Read() {
       expires: 7,
       secure: true,
       sameSite: "Strict",
-    }); // Expires in 7 days
+    });
 
     // Perform the request to check admin status
     axios

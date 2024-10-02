@@ -7,12 +7,13 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie"; // Import js-cookie to handle cookies
 import "./AppBarStyles.css"; // Import your CSS file
 
 export default function ButtonAppBar() {
-  // State to manage the anchor element for the menu
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const navigate = useNavigate(); // For navigating to other routes
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget); // Opens the menu
@@ -20,6 +21,15 @@ export default function ButtonAppBar() {
 
   const handleMenuClose = () => {
     setAnchorEl(null); // Closes the menu
+  };
+
+  const handleLogout = () => {
+    // Clear the token from localStorage and cookies
+    localStorage.removeItem("token"); // Remove token from local storage
+    Cookies.remove("token"); // Remove token from cookies
+
+    // Redirect to login page
+    navigate("/login");
   };
 
   return (
@@ -52,7 +62,7 @@ export default function ButtonAppBar() {
             <MenuItem onClick={handleMenuClose} component={Link} to="/create">
               Create
             </MenuItem>
-            <MenuItem onClick={handleMenuClose} component={Link} to="/logout">
+            <MenuItem onClick={handleLogout}> {/* Logout functionality */}
               Logout
             </MenuItem>
           </Menu>

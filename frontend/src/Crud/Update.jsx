@@ -4,6 +4,7 @@ import * as yup from "yup";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import Cookies from "js-cookie"; // Assuming token is stored in cookies or localStorage
 
 const Update = () => {
   const { id } = useParams();
@@ -21,8 +22,18 @@ const Update = () => {
   useEffect(() => {
     const fetchCx = async () => {
       try {
+        const token = localStorage.getItem("token") || Cookies.get("token"); // Get token from localStorage or cookies
+        if (!token) {
+          console.error("No token found, redirecting to login.");
+          navigate("/login");
+          return;
+        }
+
         const response = await axios.get(
-          `http://localhost:5000/api/getCustomer/${id}`
+          `http://localhost:5000/api/getCustomer/${id}`,
+          {
+            withCredentials: true,
+          }
         );
         const customer = response.data;
 
@@ -41,11 +52,11 @@ const Update = () => {
     };
 
     fetchCx();
-  }, [id]);
+  }, [id, navigate]);
 
   const formik = useFormik({
     initialValues: initialValues,
-    enableReinitialize: true,
+    enableReinitialize: true, // Reinitialize the form when initialValues change
     validationSchema: yup.object({
       firstName: yup
         .string()
@@ -63,15 +74,23 @@ const Update = () => {
       memberShip: yup.string().required("Please select your membership."),
     }),
     onSubmit: (values) => {
-      console.log(values);
+      const token = localStorage.getItem("token") || Cookies.get("token"); // Get token again for the request
+      if (!token) {
+        console.error("No token found, redirecting to login.");
+        navigate("/login");
+        return;
+      }
+
       axios
-        .put(`http://localhost:5000/api/getCustomer/${id}`, values)
+        .put(`http://localhost:5000/api/getCustomer/${id}`, values, {
+          withCredentials: true,
+        })
         .then((response) => {
-          console.log("Data submitted successfully:", response.data);
+          console.log("Data updated successfully:", response.data);
           navigate("/");
         })
         .catch((error) => {
-          console.error("There was an error submitting the form:", error);
+          console.error("There was an error updating the form:", error);
         });
     },
   });

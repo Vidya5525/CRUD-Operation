@@ -7,21 +7,24 @@ import {
   newCustomer,
   updateCustomer,
 } from "../controller/memberController.js";
-import { authorizeRoles, isAuthenticated } from "../middleware/auth.js";
+import { isAuthenticated } from "../middleware/auth.js"; // Only keeping authentication
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(isAuthenticated, authorizeRoles("admin"), getAllCustomers);
+// Get all customers (Admin only in original logic)
+router.route("/").get(isAuthenticated, getAllCustomers);
+
+// Create a new customer (Any authenticated user)
 router.route("/create").post(isAuthenticated, newCustomer);
-router
-  .route("/getUserData")
-  .get(isAuthenticated, authorizeRoles("user"), loginUserData);
+
+// Get logged-in user's data
+router.route("/getUserData").get(isAuthenticated, loginUserData);
+
+// Single customer CRUD operations
 router
   .route("/getCustomer/:id")
-  .get(getSingleCustomer)
-  .put(updateCustomer)
-  .delete(deleteCustomer);
+  .get(isAuthenticated, getSingleCustomer) // Get single customer details
+  .put(isAuthenticated, updateCustomer) // Update customer details
+  .delete(isAuthenticated, deleteCustomer); // Delete customer
 
 export default router;
